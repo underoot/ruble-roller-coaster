@@ -1,0 +1,55 @@
+canvas {
+  display: block;
+}
+
+body {
+  margin: 0;
+}
+
+video {
+  position: absolute;
+  left: -10000px;
+}
+
+.data {
+  font-family: "Press Start 2P", cursive;
+  font-weight: 600;
+  font-size: 24px;
+  color: white;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
+
+#date {
+  font-family: "Press Start 2P", cursive;
+  font-weight: 600;
+  font-size: 24px;
+  color: white;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+}
+
+#opposite_rate {
+  font-size: 16px;
+}
+
+#timeline {
+  z-index: 1;
+  opacity: 0.5;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 100px;
+  background-color: aliceblue;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  transition: all 0.25s ease-in-out;
+}
+
+#timeline:hover {
+  opacity: 0.9;
+}
