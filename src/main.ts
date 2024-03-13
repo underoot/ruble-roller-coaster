@@ -185,7 +185,7 @@ new GLTFLoader().load("train/scene.gltf", (gltf) => {
   scene.add(train);
 });
 
-const img = "/panorama.jpg";
+const img = "panorama.jpg";
 
 const texture = new THREE.TextureLoader().load(img);
 const geometry = new THREE.SphereGeometry(5000, 60, 40);
