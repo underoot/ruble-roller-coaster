@@ -185,6 +185,18 @@ new GLTFLoader().load("train/scene.gltf", (gltf) => {
   scene.add(train);
 });
 
+const img = "/panorama.jpg";
+
+const texture = new THREE.TextureLoader().load(img);
+const geometry = new THREE.SphereGeometry(5000, 60, 40);
+const material = new THREE.MeshBasicMaterial({
+  map: texture,
+  side: THREE.DoubleSide,
+});
+const sphere = new THREE.Mesh(geometry, material);
+
+scene.add(sphere);
+
 let min = 2;
 
 function start() {
@@ -209,6 +221,13 @@ function start() {
   });
 
   setInterval(() => {
+    // Move panorama with camera
+    sphere.position.set(
+      person.camera.position.x,
+      person.camera.position.y,
+      person.camera.position.z
+    );
+
     if (finalPoints[currentIndex] == null) {
       document.querySelector(".outro")?.classList.add("shown");
       return;
