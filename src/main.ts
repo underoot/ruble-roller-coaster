@@ -188,6 +188,11 @@ new GLTFLoader().load("train/scene.gltf", (gltf) => {
 let min = 2;
 
 function start() {
+  // @ts-ignore
+  document.querySelector(".intro")?.addEventListener("transitionend", () => {
+    document.body.removeChild(document.querySelector(".intro")!);
+  });
+
   document.querySelector(".intro")?.classList.add("hidden");
 
   const listener = new THREE.AudioListener();
@@ -349,7 +354,7 @@ function start() {
 
   let resizeListener = () => {
     const { width, height } = renderer.domElement.getBoundingClientRect();
-    renderer.setSize(width, height);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   };
