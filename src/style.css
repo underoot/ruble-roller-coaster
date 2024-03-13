@@ -15,8 +15,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  top: 25px;
-  left: 25px;
+  padding: 24px;
+  box-sizing: border-box;
   color: white;
 }
 
