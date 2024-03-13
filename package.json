@@ -1,14 +1,16 @@
 {
-  "name": "roller-coaster",
+  "name": "@underoot/ruble-roller-coaster",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "data": "node ./scripts/read-data.js",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --base=/ruble-roller-coaster",
     "preview": "vite preview"
   },
+  "license": "MIT",
+  "author": "Aleksandr Shoronov <alexshoronov@gmail.com>",
   "devDependencies": {
     "@types/three": "^0.155.1",
     "dbf-reader": "^1.0.3",
