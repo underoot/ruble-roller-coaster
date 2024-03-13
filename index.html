@@ -2,22 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/style.css" />
-    <title>Американские гонки</title>
+    <title>Американские горки</title>
   </head>
   <body>
     <div class="data">
-      <span id="rate">0</span>
-      <span id="opposite_rate">(0)</span>
+      <div id="rates">
+        <span id="rate">0</span>
+        <span id="opposite_rate">(0)</span>
+      </div>
+      <div id="date"></div>
     </div>
-    <div id="date"></div>
+    <div class="intro">
+      <img src="/19941011.jpg" width="70%" />
+      <div class="text">
+        Ruble to USD exchange rate is important indicator of life level.
+        It's like a roller coaster and reflect every dramatic moment in the history.
+        Why not visualize it as a real roller coaster? It's so obvious, that even
+        a russian name of this attraction in russian is "American mountains".
+      </div>
+      <div>
+        <button id="start">Start</button>
+      </div>
+    </div>
+    <div class="outro">
+    </div>
     <canvas id="timeline" height="100"></canvas>
-    <video src="putin.mp4"></video>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

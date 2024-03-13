@@ -84,7 +84,7 @@ const distanceMap = preparedPoints.map((p1, i) => {
 const points: number[][] = [];
 
 const longPoints: Array<{
-  date: number;
+  date: Date;
   before: number;
   after: number;
 }> = [];
@@ -114,8 +114,6 @@ preparedPoints.forEach((p1, i) => {
     points.push([x, y, z, p1[3]]);
   }
 });
-
-console.log(longPoints);
 
 const finalPoints = smooth(points).map((p, i) => [p[0], p[1], i * STEP, p[3]]);
 
@@ -176,34 +174,6 @@ const text = new THREE.Mesh(textGeo, basicTextMaterial);
 text.rotateX(Math.PI / 2);
 text.rotateY(Math.PI);
 
-const planeGeometry = new THREE.PlaneGeometry((2 * 16) / 9, 2);
-const video = document.querySelector("video");
-
-document.addEventListener("click", () => {
-  video?.play();
-});
-const videoTexture = new THREE.VideoTexture(video!);
-const colorMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  map: videoTexture,
-  side: THREE.DoubleSide,
-  transparent: true,
-});
-colorMaterial.opacity = 0.5;
-const messagePlane = new THREE.Mesh(planeGeometry, colorMaterial);
-
-messagePlane.position.set(
-  finalPoints[currentIndex][0],
-  finalPoints[currentIndex][1] + 5,
-  finalPoints[currentIndex][2] + 5
-);
-
-messagePlane.lookAt(
-  finalPoints[currentIndex][0],
-  finalPoints[currentIndex][1] + 5,
-  finalPoints[currentIndex][2] + 1
-);
-
 let train: THREE.Group;
 
 person.camera.rotateX(-Math.PI / 6);
@@ -217,200 +187,223 @@ new GLTFLoader().load("train/scene.gltf", (gltf) => {
 
 let min = 2;
 
-setInterval(() => {
-  train?.position.set(
-    finalPoints[currentIndex][0],
-    finalPoints[currentIndex][1] + 2,
-    finalPoints[currentIndex][2] + 0.5
-  );
-  person.camera.position.set(
-    finalPoints[currentIndex][0],
-    finalPoints[currentIndex][1] + 5,
-    finalPoints[currentIndex][2]
-  );
+function start() {
+  document.querySelector(".intro")?.classList.add("hidden");
 
-  text.position.set(
-    finalPoints[currentIndex][0],
-    finalPoints[currentIndex][1] + 5,
-    finalPoints[currentIndex][2] + 5
-  );
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
 
-  const value = finalPoints[currentIndex][1] / HEIGHT_FACTOR;
+  const sound = new THREE.Audio(listener);
 
-  if (currentIndex % 10 === 0) {
-    rateElement && (rateElement.innerText = `${(1 / value).toFixed(2)}`);
-    oppositeRateElement &&
-      (oppositeRateElement.innerText = `(${value.toFixed(4)})`);
-    dateElement &&
-      (dateElement.innerText = format(
-        finalPoints[currentIndex][3],
-        "dd.MM.yyyy"
-      ));
-  }
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load("/coaster.wav", function (buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.5);
+    sound.play();
+  });
 
-  if (currentIndex % (MAX_CROSSBARS / 4) === 0) {
-    const q = currentIndex / (MAX_CROSSBARS / 4);
-    if (q - min < 0) {
-      currentIndex++;
+  setInterval(() => {
+    if (finalPoints[currentIndex] == null) {
+      document.querySelector(".outro")?.classList.add("shown");
+      return;
+    }
+    train?.position.set(
+      finalPoints[currentIndex][0],
+      finalPoints[currentIndex][1] + 2,
+      finalPoints[currentIndex][2] + 0.5
+    );
+    person.camera.position.set(
+      finalPoints[currentIndex][0],
+      finalPoints[currentIndex][1] + 5,
+      finalPoints[currentIndex][2]
+    );
+
+    text.position.set(
+      finalPoints[currentIndex][0],
+      finalPoints[currentIndex][1] + 5,
+      finalPoints[currentIndex][2] + 5
+    );
+
+    const value = finalPoints[currentIndex][1] / HEIGHT_FACTOR;
+
+    if (currentIndex % 10 === 0) {
+      rateElement && (rateElement.innerText = `${(1 / value).toFixed(2)}`);
+      oppositeRateElement &&
+        (oppositeRateElement.innerText = `(${value.toFixed(4)})`);
+      dateElement &&
+        (dateElement.innerText = format(
+          finalPoints[currentIndex][3],
+          "dd.MM.yyyy"
+        ));
+    }
+
+    if (currentIndex % (MAX_CROSSBARS / 4) === 0) {
+      const q = currentIndex / (MAX_CROSSBARS / 4);
+      if (q - min < 0) {
+        currentIndex++;
+        return;
+      }
+
+      const startIndex = ((q - min) % 4) * (MAX_CROSSBARS / 4);
+
+      for (let i = 0; i < MAX_CROSSBARS / 4; i++) {
+        const idx = currentIndex + MAX_CROSSBARS / 2 + i;
+
+        if (!finalPoints[idx]) {
+          continue;
+        }
+
+        const model = models[startIndex + i];
+        const currentRotation = model.rotation.x;
+        const currPoint = new THREE.Vector3(...finalPoints[idx]);
+        model.position.set(currPoint.x, currPoint.y, currPoint.z);
+        model.rotateX(anglesMap[idx] - currentRotation);
+      }
+    }
+
+    currentIndex++;
+  }, 16);
+
+  let moveKey = new Set();
+  let rotateKey = "";
+  let targetKeyCodes = [87, 68, 83, 65];
+
+  const onKeyDown = function (event: KeyboardEvent) {
+    if (!targetKeyCodes.includes(event.keyCode)) {
       return;
     }
 
-    const startIndex = ((q - min) % 4) * (MAX_CROSSBARS / 4);
+    moveKey.add(event.keyCode);
+  };
 
-    for (let i = 0; i < MAX_CROSSBARS / 4; i++) {
-      const idx = currentIndex + MAX_CROSSBARS / 2 + i;
+  const onKeyUp = function (event: KeyboardEvent) {
+    moveKey.delete(event.keyCode);
+  };
+
+  document.addEventListener("keydown", onKeyDown, false);
+  document.addEventListener("keyup", onKeyUp, false);
+
+  scene.add(person.getObject());
+
+  const grassTexture = new THREE.TextureLoader().load("grass.jpg");
+
+  grassTexture.wrapS = THREE.RepeatWrapping;
+  grassTexture.wrapT = THREE.RepeatWrapping;
+
+  grassTexture.repeat.set(100, 100);
+
+  const geometry = new THREE.PlaneGeometry(50000, 50000);
+  const material = new THREE.MeshBasicMaterial({
+    map: grassTexture,
+    side: THREE.DoubleSide,
+  });
+  const plane = new THREE.Mesh(geometry, material);
+
+  plane.rotateX(Math.PI / 2);
+  scene.add(plane);
+
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
+  hemiLight.color.setHSL(0.6, 1, 0.6);
+  hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+  hemiLight.position.set(0, 50, 0);
+  scene.add(hemiLight);
+
+  let lockListener = () => {
+    try {
+      person.lock();
+    } catch (e) {}
+  };
+
+  renderer.domElement.addEventListener("click", lockListener);
+
+  function amimate() {
+    requestAnimationFrame(amimate);
+    renderer.render(scene, camera);
+
+    for (const key of moveKey.values()) {
+      switch (key) {
+        case 87:
+          person.moveForward(1);
+          break;
+        case 68:
+          person.moveRight(1);
+          break;
+        case 83:
+          person.moveForward(-1);
+          break;
+        case 65:
+          person.moveRight(-1);
+          break;
+      }
+    }
+
+    if (rotateKey === "R") {
+      camera.rotateY(-0.02);
+    } else if (rotateKey === "L") {
+      camera.rotateY(0.02);
+    }
+  }
+
+  amimate();
+
+  let resizeListener = () => {
+    const { width, height } = renderer.domElement.getBoundingClientRect();
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  };
+
+  window.addEventListener("resize", resizeListener);
+
+  const timeline = document.getElementById("timeline") as HTMLCanvasElement;
+  const context = timeline?.getContext("2d") as CanvasRenderingContext2D;
+
+  const pointWidth = window.innerWidth / finalPoints.length;
+  const pointHeight = timeline.height / maxHeight;
+
+  context.beginPath();
+  context.moveTo(0, 1 - finalPoints[0][1] / maxHeight);
+
+  // Resize canvas to it's real size
+  timeline.setAttribute("width", window.innerWidth.toString());
+
+  timeline.addEventListener("click", (e) => {
+    const x = e.offsetX;
+
+    const index = Math.floor(x / pointWidth);
+
+    currentIndex = index;
+
+    const currentIndexMod = currentIndex % (MAX_CROSSBARS / 4);
+    const newQ = (currentIndex - currentIndexMod) / (MAX_CROSSBARS / 4);
+    min = newQ + 1;
+    const startIndex = currentIndex - currentIndexMod;
+
+    for (let i = 0; i < MAX_CROSSBARS; i++) {
+      const idx = startIndex + i;
 
       if (!finalPoints[idx]) {
         continue;
       }
 
-      const model = models[startIndex + i];
+      const model = models[i];
       const currentRotation = model.rotation.x;
       const currPoint = new THREE.Vector3(...finalPoints[idx]);
       model.position.set(currPoint.x, currPoint.y, currPoint.z);
       model.rotateX(anglesMap[idx] - currentRotation);
     }
+  });
+
+  for (let i = 0; i < finalPoints.length; i++) {
+    const y = timeline.height - finalPoints[i][1] * pointHeight;
+
+    context.strokeStyle = "#000000";
+    context.lineWidth = 1;
+    context.lineTo(i * pointWidth, y);
   }
 
-  currentIndex++;
-}, 16);
-
-let moveKey = new Set();
-let rotateKey = "";
-let targetKeyCodes = [87, 68, 83, 65];
-
-const onKeyDown = function (event: KeyboardEvent) {
-  if (!targetKeyCodes.includes(event.keyCode)) {
-    return;
-  }
-
-  moveKey.add(event.keyCode);
-};
-
-const onKeyUp = function (event: KeyboardEvent) {
-  moveKey.delete(event.keyCode);
-};
-
-document.addEventListener("keydown", onKeyDown, false);
-document.addEventListener("keyup", onKeyUp, false);
-
-scene.add(person.getObject());
-
-const grassTexture = new THREE.TextureLoader().load("grass.jpg");
-
-grassTexture.wrapS = THREE.RepeatWrapping;
-grassTexture.wrapT = THREE.RepeatWrapping;
-
-grassTexture.repeat.set(100, 100);
-
-const geometry = new THREE.PlaneGeometry(50000, 50000);
-const material = new THREE.MeshBasicMaterial({
-  map: grassTexture,
-  side: THREE.DoubleSide,
-});
-const plane = new THREE.Mesh(geometry, material);
-
-plane.rotateX(Math.PI / 2);
-scene.add(plane);
-
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
-hemiLight.color.setHSL(0.6, 1, 0.6);
-hemiLight.groundColor.setHSL(0.095, 1, 0.75);
-hemiLight.position.set(0, 50, 0);
-scene.add(hemiLight);
-
-let lockListener = () => {
-  try {
-    person.lock();
-  } catch (e) {}
-};
-
-renderer.domElement.addEventListener("click", lockListener);
-
-function amimate() {
-  requestAnimationFrame(amimate);
-  renderer.render(scene, camera);
-
-  for (const key of moveKey.values()) {
-    switch (key) {
-      case 87:
-        person.moveForward(1);
-        break;
-      case 68:
-        person.moveRight(1);
-        break;
-      case 83:
-        person.moveForward(-1);
-        break;
-      case 65:
-        person.moveRight(-1);
-        break;
-    }
-  }
-
-  if (rotateKey === "R") {
-    camera.rotateY(-0.02);
-  } else if (rotateKey === "L") {
-    camera.rotateY(0.02);
-  }
+  context.stroke();
 }
 
-amimate();
-
-let resizeListener = () => {
-  const { width, height } = renderer.domElement.getBoundingClientRect();
-  renderer.setSize(width, height);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-};
-
-window.addEventListener("resize", resizeListener);
-
-const timeline = document.getElementById("timeline") as HTMLCanvasElement;
-const context = timeline?.getContext("2d") as CanvasRenderingContext2D;
-
-const pointWidth = window.innerWidth / finalPoints.length;
-const pointHeight = timeline.height / maxHeight;
-
-context.beginPath();
-context.moveTo(0, 1 - finalPoints[0][1] / maxHeight);
-
-// Resize canvas to it's real size
-timeline.setAttribute("width", window.innerWidth.toString());
-
-timeline.addEventListener("click", (e) => {
-  const x = e.offsetX;
-
-  const index = Math.floor(x / pointWidth);
-
-  currentIndex = index;
-
-  const currentIndexMod = currentIndex % (MAX_CROSSBARS / 4);
-  const newQ = (currentIndex - currentIndexMod) / (MAX_CROSSBARS / 4);
-  min = newQ + 1;
-  const startIndex = currentIndex - currentIndexMod;
-
-  for (let i = 0; i < MAX_CROSSBARS; i++) {
-    const idx = startIndex + i;
-
-    if (!finalPoints[idx]) {
-      continue;
-    }
-
-    const model = models[i];
-    const currentRotation = model.rotation.x;
-    const currPoint = new THREE.Vector3(...finalPoints[idx]);
-    model.position.set(currPoint.x, currPoint.y, currPoint.z);
-    model.rotateX(anglesMap[idx] - currentRotation);
-  }
-});
-
-for (let i = 0; i < finalPoints.length; i++) {
-  const y = timeline.height - finalPoints[i][1] * pointHeight;
-
-  context.strokeStyle = "#000000";
-  context.lineWidth = 1;
-  context.lineTo(i * pointWidth, y);
-}
-
-context.stroke();
+document.querySelector("button")?.addEventListener("click", start);

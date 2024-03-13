@@ -6,17 +6,15 @@ body {
   margin: 0;
 }
 
-video {
-  position: absolute;
-  left: -10000px;
-}
-
 .data {
   font-family: "Press Start 2P", cursive;
   font-weight: 600;
   font-size: 24px;
-  color: white;
   position: absolute;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 25px;
   left: 25px;
 }
@@ -25,10 +23,10 @@ video {
   font-family: "Press Start 2P", cursive;
   font-weight: 600;
   font-size: 24px;
-  color: white;
-  position: absolute;
-  top: 25px;
-  right: 25px;
+}
+
+#rates {
+  margin-bottom: 16px;
 }
 
 #opposite_rate {
@@ -52,4 +50,69 @@ video {
 
 #timeline:hover {
   opacity: 0.9;
+}
+
+.intro {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  padding: 24px;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: white;
+  font-family: "Press Start 2P";
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.25s ease-in-out;
+}
+
+.intro .text {
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.intro.hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.outro {
+  display: none;
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/robert.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: black;
+}
+
+.outro.shown {
+  display: block;
+}
+
+.intro img {
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+
+.intro button {
+  font-family: "Press Start 2P";
+  font-size: 24px;
+  padding: 10px;
+  margin-top: 20px;
+  border-radius: 10px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
 }
