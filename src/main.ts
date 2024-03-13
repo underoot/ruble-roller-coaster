@@ -196,7 +196,7 @@ function start() {
   const sound = new THREE.Audio(listener);
 
   const audioLoader = new THREE.AudioLoader();
-  audioLoader.load("/coaster.wav", function (buffer) {
+  audioLoader.load("coaster.wav", function (buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.setVolume(0.5);
