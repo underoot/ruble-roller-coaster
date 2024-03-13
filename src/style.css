@@ -17,12 +17,14 @@ body {
   justify-content: space-between;
   top: 25px;
   left: 25px;
+  color: white;
 }
 
 #date {
   font-family: "Press Start 2P", cursive;
   font-weight: 600;
   font-size: 24px;
+  color: white;
 }
 
 #rates {
@@ -30,6 +32,7 @@ body {
 }
 
 #opposite_rate {
+  color: white;
   font-size: 16px;
 }
 
