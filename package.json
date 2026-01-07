@@ -19,7 +19,7 @@
     "vite-plugin-webfont-dl": "^3.7.6"
   },
   "dependencies": {
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.1.0",
     "smooth-polyline": "^1.0.8",
     "three": "^0.182.0"
   }
