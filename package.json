@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/three": "^0.155.1",
     "dbf-reader": "^1.0.3",
-    "typescript": "^5.0.2",
+    "typescript": "^5.9.3",
     "vite": "^4.4.5",
     "vite-plugin-webfont-dl": "^3.7.6"
   },
