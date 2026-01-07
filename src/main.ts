@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
-import format from "date-fns/format";
+import { format } from "date-fns";
 
 import data from "./data.json";
 
