@@ -161,7 +161,7 @@ const rateElement = document.getElementById("rate");
 const oppositeRateElement = document.getElementById("opposite_rate");
 const dateElement = document.getElementById("date");
 
-person.camera.rotateY(Math.PI);
+person.object.rotateY(Math.PI);
 
 const basicTextMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
@@ -176,7 +176,7 @@ text.rotateY(Math.PI);
 
 let train: THREE.Group;
 
-person.camera.rotateX(-Math.PI / 6);
+person.object.rotateX(-Math.PI / 6);
 
 new GLTFLoader().load("train/scene.gltf", (gltf) => {
   train = gltf.scene;
@@ -223,9 +223,9 @@ function start() {
   setInterval(() => {
     // Move panorama with camera
     sphere.position.set(
-      person.camera.position.x,
-      person.camera.position.y,
-      person.camera.position.z
+      person.object.position.x,
+      person.object.position.y,
+      person.object.position.z
     );
 
     if (finalPoints[currentIndex] == null) {
@@ -237,7 +237,7 @@ function start() {
       finalPoints[currentIndex][1] + 2,
       finalPoints[currentIndex][2] + 0.5
     );
-    person.camera.position.set(
+    person.object.position.set(
       finalPoints[currentIndex][0],
       finalPoints[currentIndex][1] + 5,
       finalPoints[currentIndex][2]
