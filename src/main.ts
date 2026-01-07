@@ -148,6 +148,8 @@ scene.background = new THREE.Color(0x33ddff);
 const ratio = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, ratio, 0.1, 5000);
 
+scene.add(camera);
+
 const renderer = new THREE.WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -307,8 +309,6 @@ function start() {
 
   document.addEventListener("keydown", onKeyDown, false);
   document.addEventListener("keyup", onKeyUp, false);
-
-  scene.add(person.getObject());
 
   const grassTexture = new THREE.TextureLoader().load("grass.jpg");
 
