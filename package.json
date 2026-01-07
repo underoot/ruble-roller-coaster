@@ -12,7 +12,7 @@
   "license": "MIT",
   "author": "Aleksandr Shoronov <alexshoronov@gmail.com>",
   "devDependencies": {
-    "@types/three": "^0.155.1",
+    "@types/three": "^0.182.0",
     "dbf-reader": "^1.0.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
@@ -21,6 +21,6 @@
   "dependencies": {
     "date-fns": "^2.30.0",
     "smooth-polyline": "^1.0.8",
-    "three": "^0.155.0"
+    "three": "^0.182.0"
   }
 }
